@@ -1,3 +1,3 @@
 #!/bin/sh
 
-locust --host $TARGET_URL --wait-time 5 --users ${WORKERS:-1}
+locust --host ${HOST:-http://localhost:8000} --wait-time 5 --users ${WORKERS:-1}
