@@ -1,3 +1,3 @@
 #!/bin/sh
 
-/bin/sleep 100000
+locust --host $TARGET_URL --wait-time 5 --users ${WORKERS:-1}
