@@ -23,9 +23,9 @@ def _random_characters_(length: int) -> str:
 
 
 def get_local_timezone():
-    local_tz_name = time.tzname[time.localtime().tm_isdst]  # returns something like "+08"
-    offset = timedelta(hours=int(local_tz_name))
-    return timezone(offset)
+    local_time_offset_sec = time.localtime().tm_gmtoff
+    local_time_offset = timedelta(seconds=local_time_offset_sec)
+    return timezone(local_time_offset)
 
 
 def rand_fund_transfer_request(all_accounts: list[str], amount: int = 0):
