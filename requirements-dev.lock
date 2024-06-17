@@ -83,7 +83,6 @@ pytest-dotenv==0.5.2
 pytest-mock==3.14.0
 python-dotenv==1.0.1
     # via pytest-dotenv
-pytz==2024.1
 pyyaml==6.0.1
     # via pre-commit
 pyzmq==26.0.3
