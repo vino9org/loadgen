@@ -1,4 +1,4 @@
-from locust import HttpUser, events, run_single_user, task
+from locust import FastHttpUser, events, run_single_user, task
 
 from api_tasks import rand_fund_transfer_request, read_accounts_from_csv
 
@@ -19,7 +19,7 @@ def custom_wait_time_function(locust):
     return float(wait_time)
 
 
-class FundTransferApiUser(HttpUser):
+class FundTransferApiUser(FastHttpUser):
     host = "http://localhost:8000"
     wait_time = custom_wait_time_function
 
