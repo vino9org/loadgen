@@ -1,4 +1,4 @@
-from locust import FastHttpUser, events, run_single_user, tag, task
+from locust import FastHttpUser, events, run_single_user
 
 from api_tasks import rand_fund_transfer_request, read_accounts_from_csv
 
@@ -19,7 +19,7 @@ def custom_wait_time_function(locust):
     return float(wait_time)
 
 
-class FundTransferApiUser(FastHttpUser):
+class PythonApiUser(FastHttpUser):
     host = "http://localhost"
     wait_time = custom_wait_time_function
 
@@ -27,20 +27,29 @@ class FundTransferApiUser(FastHttpUser):
         data_file = self.environment.parsed_options.data_file
         self.all_accounts = read_accounts_from_csv(data_file)
 
-    @task(1)
-    @tag("fastapi")
-    def call_fastapi_api(self):
-        self.call_fund_transfer_api(prefix="/fastapi")
-
-    @task(1)
-    @tag("spring")
-    def call_spring_api(self):
-        self.call_fund_transfer_api(prefix="/fastapi")
-
-    def call_fund_transfer_api(self, prefix=""):
+    def call_fund_transfer_api(self):
         payload = rand_fund_transfer_request(self.all_accounts)
         response = self.client.post(
-            url=f"{prefix}/api/casa/transfers",
+            url="/fastapi/api/casa/transfers",
+            headers={"content-type": "application/json"},
+            json=payload,
+        )
+        if response.status_code != 201:
+            print(response.text)
+
+
+class JavaApiUser(FastHttpUser):
+    host = "http://localhost"
+    wait_time = custom_wait_time_function
+
+    def on_start(self):
+        data_file = self.environment.parsed_options.data_file
+        self.all_accounts = read_accounts_from_csv(data_file)
+
+    def call_fund_transfer_api(self):
+        payload = rand_fund_transfer_request(self.all_accounts)
+        response = self.client.post(
+            url="/spring/api/casa/transfers",
             headers={"content-type": "application/json"},
             json=payload,
         )
@@ -49,4 +58,4 @@ class FundTransferApiUser(FastHttpUser):
 
 
 if __name__ == "__main__":
-    run_single_user(FundTransferApiUser)
+    run_single_user(PythonApiUser)
