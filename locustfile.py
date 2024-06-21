@@ -1,4 +1,4 @@
-from locust import FastHttpUser, events, run_single_user
+from locust import FastHttpUser, events, run_single_user, task
 
 from api_tasks import rand_fund_transfer_request, read_accounts_from_csv
 
@@ -27,6 +27,7 @@ class PythonApiUser(FastHttpUser):
         data_file = self.environment.parsed_options.data_file
         self.all_accounts = read_accounts_from_csv(data_file)
 
+    @task
     def call_fund_transfer_api(self):
         payload = rand_fund_transfer_request(self.all_accounts)
         response = self.client.post(
@@ -46,6 +47,7 @@ class JavaApiUser(FastHttpUser):
         data_file = self.environment.parsed_options.data_file
         self.all_accounts = read_accounts_from_csv(data_file)
 
+    @task
     def call_fund_transfer_api(self):
         payload = rand_fund_transfer_request(self.all_accounts)
         response = self.client.post(
