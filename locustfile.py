@@ -1,4 +1,4 @@
-from locust import FastHttpUser, events, run_single_user, task
+from locust import FastHttpUser, events, run_single_user, tag, task
 
 from api_tasks import rand_fund_transfer_request, read_accounts_from_csv
 
@@ -20,18 +20,27 @@ def custom_wait_time_function(locust):
 
 
 class FundTransferApiUser(FastHttpUser):
-    host = "http://localhost:8000"
+    host = "http://localhost"
     wait_time = custom_wait_time_function
 
     def on_start(self):
         data_file = self.environment.parsed_options.data_file
         self.all_accounts = read_accounts_from_csv(data_file)
 
-    @task
-    def call_fund_transfer_api(self):
+    @task(1)
+    @tag("fastapi")
+    def call_fastapi_api(self):
+        self.call_fund_transfer_api(prefix="/fastapi")
+
+    @task(1)
+    @tag("spring")
+    def call_spring_api(self):
+        self.call_fund_transfer_api(prefix="/fastapi")
+
+    def call_fund_transfer_api(self, prefix=""):
         payload = rand_fund_transfer_request(self.all_accounts)
         response = self.client.post(
-            url="/api/casa/transfers",
+            url=f"{prefix}/api/casa/transfers",
             headers={"content-type": "application/json"},
             json=payload,
         )

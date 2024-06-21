@@ -4,7 +4,7 @@ import string
 import time
 from datetime import datetime, timedelta, timezone
 
-__all_accounts__ = []
+__all_accounts__: list[str] = []
 
 
 def read_accounts_from_csv(file_path: str):
@@ -34,14 +34,11 @@ def rand_fund_transfer_request(all_accounts: list[str], amount: int = 0):
     if amount == 0:
         amount = random.randint(300, 1000)
 
-    now_dt = datetime.now(get_local_timezone())
-
     return {
-        "trx_date": now_dt.strftime("%Y-%m-%d"),
+        "trx_date": datetime.now().strftime("%Y-%m-%d"),
         "debit_account_num": debit_account,
         "credit_account_num": credit_account,
         "amount": float(amount / 100),
         "currency": "USD",
         "memo": _random_characters_(16),
-        "created_at": now_dt.isoformat(),
     }
