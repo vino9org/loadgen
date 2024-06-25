@@ -1,11 +1,10 @@
 import csv
+import os
 import random
 import string
 import time
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
-
-__all_accounts__: list[str] = []
 
 
 def read_accounts_from_csv(file_path: str):
@@ -15,6 +14,11 @@ def read_accounts_from_csv(file_path: str):
         for row in reader:
             accounts.add(row["account_num"])
     return list(accounts)
+
+
+data_file_name = os.environ.get("LOCUST_DATA_FILE", "seed.csv")
+print(f"loading data from {data_file_name}")
+all_accounts: list[str] = read_accounts_from_csv(data_file_name)
 
 
 def _random_characters_(length: int) -> str:
@@ -29,7 +33,9 @@ def get_local_timezone():
     return timezone(local_time_offset)
 
 
-def rand_fund_transfer_request(all_accounts: list[str], amount: int = 0):
+def rand_fund_transfer_request(amount: int = 0):
+    global all_accounts
+
     debit_account = random.choice(all_accounts)
     credit_account = random.choice(all_accounts)
     if amount == 0:

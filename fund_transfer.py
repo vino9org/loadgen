@@ -1,6 +1,6 @@
 from locust import FastHttpUser, tag, task
 
-from api_helper import rand_fund_transfer_request, read_accounts_from_csv
+from api_helper import rand_fund_transfer_request
 
 
 def custom_wait_time_function(locust):
@@ -12,15 +12,10 @@ class PythonApiUser(FastHttpUser):
     host = "http://localhost:8000"
     wait_time = custom_wait_time_function
 
-    def on_start(self):
-        data_file = self.environment.parsed_options.data_file
-        print(f"loading data from {data_file}")
-        self.all_accounts = read_accounts_from_csv(data_file)
-
     @task
     @tag("python_fund_transfer")
     def call_fund_transfer_api(self):
-        payload = rand_fund_transfer_request(self.all_accounts)
+        payload = rand_fund_transfer_request()
         response = self.client.post(
             url="/api/casa/transfers",
             headers={"content-type": "application/json"},
@@ -34,14 +29,11 @@ class JavaApiUser(FastHttpUser):
     host = "http://localhost:8080"
     wait_time = custom_wait_time_function
 
-    def on_start(self):
-        data_file = self.environment.parsed_options.data_file
-        self.all_accounts = read_accounts_from_csv(data_file)
-
     @task
     @tag("java_fund_transfer")
     def call_fund_transfer_api(self):
-        payload = rand_fund_transfer_request(self.all_accounts)
+        global all_accounts
+        payload = rand_fund_transfer_request()
         response = self.client.post(
             url="/spring/api/casa/transfers",
             headers={"content-type": "application/json"},
