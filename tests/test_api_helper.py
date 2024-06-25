@@ -1,4 +1,4 @@
-from api_tasks import _random_characters_
+from api_helper import _random_characters_
 
 
 def test_random_characters():

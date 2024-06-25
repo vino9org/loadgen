@@ -1,6 +1,8 @@
-from locust import FastHttpUser, events, run_single_user, task
+import sys
 
-from api_tasks import rand_fund_transfer_request, read_accounts_from_csv
+from locust import events, run_single_user
+
+from fund_transfer import JavaApiUser, PythonApiUser
 
 
 @events.init_command_line_parser.add_listener
@@ -14,50 +16,11 @@ def _(environment, **kw):
     print(f"Custom argument supplied: {environment.parsed_options.wait_time}")
 
 
-def custom_wait_time_function(locust):
-    wait_time = locust.environment.parsed_options.wait_time
-    return float(wait_time)
-
-
-class PythonApiUser(FastHttpUser):
-    host = "http://localhost"
-    wait_time = custom_wait_time_function
-
-    def on_start(self):
-        data_file = self.environment.parsed_options.data_file
-        self.all_accounts = read_accounts_from_csv(data_file)
-
-    @task
-    def call_fund_transfer_api(self):
-        payload = rand_fund_transfer_request(self.all_accounts)
-        response = self.client.post(
-            url="/fastapi/api/casa/transfers",
-            headers={"content-type": "application/json"},
-            json=payload,
-        )
-        if response.status_code != 201:
-            print(response.text)
-
-
-class JavaApiUser(FastHttpUser):
-    host = "http://localhost"
-    wait_time = custom_wait_time_function
-
-    def on_start(self):
-        data_file = self.environment.parsed_options.data_file
-        self.all_accounts = read_accounts_from_csv(data_file)
-
-    @task
-    def call_fund_transfer_api(self):
-        payload = rand_fund_transfer_request(self.all_accounts)
-        response = self.client.post(
-            url="/spring/api/casa/transfers",
-            headers={"content-type": "application/json"},
-            json=payload,
-        )
-        if response.status_code != 201:
-            print(response.text)
-
-
 if __name__ == "__main__":
-    run_single_user(PythonApiUser)
+    if len(sys.argv) == 1 or sys.argv[1] == "python":
+        run_single_user(PythonApiUser)
+    elif sys.argv[1] == "java":
+        run_single_user(JavaApiUser)
+    else:
+        print("Usage: locustfile.py [python|java]")
+        sys.exit(1)
