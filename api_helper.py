@@ -37,7 +37,7 @@ def rand_fund_transfer_request(all_accounts: list[str], amount: int = 0):
 
     return {
         "trx_date": datetime.now().strftime("%Y-%m-%d"),
-        "trx_id": uuid4().hex,
+        "ref_id": uuid4().hex,
         "debit_account_num": debit_account,
         "credit_account_num": credit_account,
         "amount": float(amount / 100),
