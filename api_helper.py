@@ -3,6 +3,7 @@ import random
 import string
 import time
 from datetime import datetime, timedelta, timezone
+from uuid import uuid4
 
 __all_accounts__: list[str] = []
 
@@ -36,6 +37,7 @@ def rand_fund_transfer_request(all_accounts: list[str], amount: int = 0):
 
     return {
         "trx_date": datetime.now().strftime("%Y-%m-%d"),
+        "trx_id": uuid4().hex,
         "debit_account_num": debit_account,
         "credit_account_num": credit_account,
         "amount": float(amount / 100),
