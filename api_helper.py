@@ -19,6 +19,7 @@ def read_accounts_from_csv(file_path: str):
 data_file_name = os.environ.get("LOCUST_DATA_FILE", "seed.csv")
 print(f"loading data from {data_file_name}")
 all_accounts: list[str] = read_accounts_from_csv(data_file_name)
+print(f"loaded {len(all_accounts)} accounts")
 
 
 def _random_characters_(length: int) -> str:
