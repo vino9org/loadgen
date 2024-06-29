@@ -9,7 +9,7 @@ def custom_wait_time_function(locust):
 
 
 class PythonApiUser(FastHttpUser):
-    host = "http://localhost:8000"
+    host = "http://localhost:5000"
     wait_time = custom_wait_time_function
 
     @task

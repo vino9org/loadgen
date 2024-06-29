@@ -40,14 +40,16 @@ def rand_fund_transfer_request(amount: int = 0):
     debit_account = random.choice(all_accounts)
     credit_account = random.choice(all_accounts)
     if amount == 0:
-        amount = random.randint(300, 1000)
+        amount = random.randint(300, 20000)
+    amount_str = f"{int(amount/100)}.{amount%100}"
+    print(amount_str)
 
     return {
         "trx_date": datetime.now().strftime("%Y-%m-%d"),
         "ref_id": uuid4().hex,
         "debit_account_num": debit_account,
         "credit_account_num": credit_account,
-        "amount": float(amount / 100),
+        "amount": amount_str,
         "currency": "USD",
         "memo": _random_characters_(16),
     }
