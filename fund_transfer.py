@@ -35,7 +35,7 @@ class JavaApiUser(FastHttpUser):
         global all_accounts
         payload = rand_fund_transfer_request()
         response = self.client.post(
-            url="/spring/api/casa/transfers",
+            url="/api/casa/transfers",
             headers={"content-type": "application/json"},
             json=payload,
         )
