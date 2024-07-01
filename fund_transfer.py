@@ -8,6 +8,30 @@ def custom_wait_time_function(locust):
     return float(wait_time)
 
 
+def is_legit_error(err_msg):
+    return (
+        "Insufficient funds in debit account" in err_msg
+        or "Invalid debit or credit account" in err_msg
+    )
+
+
+def call_fund_transfer_api(client):
+    payload = rand_fund_transfer_request()
+    with client.post(
+        url="/api/casa/transfers",
+        headers={"content-type": "application/json"},
+        json=payload,
+        catch_response=True,
+    ) as response:
+        if response.status_code == 201 or (
+            response.status_code == 422 and is_legit_error(response.text)
+        ):
+            response.success()
+        else:
+            print(response.text)
+            response.failure(response.text)
+
+
 class PythonApiUser(FastHttpUser):
     host = "http://localhost:5000"
     wait_time = custom_wait_time_function
@@ -15,14 +39,7 @@ class PythonApiUser(FastHttpUser):
     @task
     @tag("python_fund_transfer")
     def call_fund_transfer_api(self):
-        payload = rand_fund_transfer_request()
-        response = self.client.post(
-            url="/api/casa/transfers",
-            headers={"content-type": "application/json"},
-            json=payload,
-        )
-        if response.status_code != 201:
-            print(response.text)
+        call_fund_transfer_api(self.client)
 
 
 class JavaApiUser(FastHttpUser):
@@ -32,12 +49,4 @@ class JavaApiUser(FastHttpUser):
     @task
     @tag("java_fund_transfer")
     def call_fund_transfer_api(self):
-        global all_accounts
-        payload = rand_fund_transfer_request()
-        response = self.client.post(
-            url="/api/casa/transfers",
-            headers={"content-type": "application/json"},
-            json=payload,
-        )
-        if response.status_code != 201:
-            print(response.text)
+        call_fund_transfer_api(self.client)

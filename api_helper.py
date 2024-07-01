@@ -37,11 +37,10 @@ def get_local_timezone():
 def rand_fund_transfer_request(amount: int = 0):
     global all_accounts
 
-    debit_account = random.choice(all_accounts)
-    credit_account = random.choice(all_accounts)
+    debit_account, credit_account = tuple(random.sample(all_accounts, 2))
     if amount == 0:
         amount = random.randint(300, 20000)
-    amount_str = f"{int(amount/100)}.{amount%100}"
+    amount_str = f"{int(amount/100)}.{amount%100:02}"
 
     return {
         "trx_date": datetime.now().strftime("%Y-%m-%d"),

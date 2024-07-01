@@ -7,7 +7,13 @@ from fund_transfer import JavaApiUser, PythonApiUser
 
 @events.init_command_line_parser.add_listener
 def _(parser):
-    parser.add_argument("--wait-time", type=str, dest="wait_time", default="1", help="wait time between requests")
+    parser.add_argument(
+        "--wait-time",
+        type=str,
+        dest="wait_time",
+        default="1",
+        help="wait time between requests",
+    )
 
 
 @events.test_start.add_listener
