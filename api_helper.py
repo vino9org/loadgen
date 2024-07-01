@@ -42,7 +42,6 @@ def rand_fund_transfer_request(amount: int = 0):
     if amount == 0:
         amount = random.randint(300, 20000)
     amount_str = f"{int(amount/100)}.{amount%100}"
-    print(amount_str)
 
     return {
         "trx_date": datetime.now().strftime("%Y-%m-%d"),
