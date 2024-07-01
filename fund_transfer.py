@@ -23,12 +23,14 @@ def call_fund_transfer_api(client):
         json=payload,
         catch_response=True,
     ) as response:
-        if response.status_code == 201 or (
-            response.status_code == 422 and is_legit_error(response.text)
-        ):
+        if response.status_code == 201:
+            response.success()
+        elif response.status_code == 422 and is_legit_error(response.text):
+            print("business erorr, considered success")
             response.success()
         else:
-            print(response.text)
+            print(f"{response.status_code},{response.text}")
+            print(payload)
             response.failure(response.text)
 
 
